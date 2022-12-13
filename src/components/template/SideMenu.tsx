@@ -1,5 +1,5 @@
 import { IconBell, IconHome, IconLogout, IconSettings } from "../icons";
-import Logo from "../Logo";
+import Logo from "./Logo";
 import MenuItems from "./MenuItems";
 
 interface SideMenuProps {
