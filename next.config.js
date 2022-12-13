@@ -2,6 +2,13 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-}
+  images: {
+    domains: [
+      "lh3.googleusercontent.com",
+      "firebase.googleusercontent.com",
+      "site-vofstudio.appspot.com",
+    ],
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
