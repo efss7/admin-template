@@ -3,11 +3,9 @@ import Image from 'next/image'
 import router from 'next/router'
 import Loading from '../../../public/images/loading.gif'
 import useAuth from '../../data/hook/useAuth'
-interface ForceAuthPropsProps {
 
-}
 
-export default function ForceAuth(props: ForceAuthPropsProps) {
+export default function ForceAuth(props) {
     const { user, loading } = useAuth()
     function renderContent() {
         return (

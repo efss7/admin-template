@@ -1,7 +1,5 @@
 import { createContext, useEffect, useState } from "react";
 
-// type Theme = 'dark' | ''
-
 interface AppContextProps{
     theme?: string
     switchTheme?: () => void
@@ -9,7 +7,7 @@ interface AppContextProps{
 
 const AppContext = createContext<AppContextProps>({})
 
-export function AppProvider(props:AppContextProps){
+export function AppProvider(props){
     const [theme, setTheme] = useState('dark')
 
     function switchTheme(){
