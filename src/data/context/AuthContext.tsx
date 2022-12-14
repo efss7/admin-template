@@ -7,6 +7,8 @@ import User from "../../model/User";
 interface AuthContextProps {
     user?: User
     loading?: boolean
+    login?: (email: string, password: string) => Promise<void>
+    signUp?: (email: string, password: string) => Promise<void>
     loginGoogle?: () => Promise<void>
     logout?: () => Promise<void>
 }
@@ -55,13 +57,39 @@ export function AuthProvider(props) {
         }
     }
 
+    async function login(email, password) {
+        try {
+            setLoading(true)
+            const res = await firebase.auth()
+                .signInWithEmailAndPassword(email, password)
+            await configureSection(res.user)
+            route.push('/')
+        } finally {
+            setLoading(false)
+        }
+
+    }
+
+    async function signUp(email, password) {
+        try {
+            setLoading(true)
+            const res = await firebase.auth()
+                .createUserWithEmailAndPassword(email, password)
+            await configureSection(res.user)
+            route.push('/')
+        } finally {
+            setLoading(false)
+        }
+
+    }
+
     async function loginGoogle() {
         try {
             setLoading(true)
             const res = await firebase.auth().signInWithPopup(
                 new firebase.auth.GoogleAuthProvider()
             )
-            configureSection(res.user)
+            await configureSection(res.user)
             route.push('/')
         } finally {
             setLoading(false)
@@ -83,7 +111,7 @@ export function AuthProvider(props) {
         if (Cookies.get('admin-template-efss7-auth')) {
             const cancel = firebase.auth().onIdTokenChanged(configureSection)
             return () => cancel()
-        } else{
+        } else {
             setLoading(false)
         }
     }, [])
@@ -92,6 +120,8 @@ export function AuthProvider(props) {
         <AuthContext.Provider value={{
             user,
             loading,
+            login,
+            signUp,
             loginGoogle,
             logout
         }}>

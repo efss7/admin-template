@@ -10,24 +10,30 @@ interface AuthenticationProps {
 
 export default function Authentication(props: AuthenticationProps) {
 
-    const {user, loginGoogle} = useAuth()
+    const { login, signUp, loginGoogle } = useAuth()
 
     const [error, setError] = useState(null)
     const [mode, setMode] = useState<'login' | 'signUp'>('login')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    function displayError(msg, time = 5){
+    function displayError(msg, time = 5) {
         setError(msg)
-        setTimeout(()=> setError(null), time * 1000)
+        setTimeout(() => setError(null), time * 1000)
     }
 
-    function submit() {
-        if (mode === 'login') {
-            console.log('login')
-        } else {
-            console.log('signUp')
+    async function submit() {
+        try {
+            if (mode === 'login') {
+                await login(email, password)
+            } else {
+                await signUp(email, password)
+            }
+        } catch (error) {
+            displayError(error?.message ??
+                'Ocorreu um erro inesperado, tente novamente mais tarde!')
         }
+
     }
     return (
         <div className="flex h-screen items-center justify-center">
@@ -51,7 +57,7 @@ export default function Authentication(props: AuthenticationProps) {
                         {IconExclamation()}
                         <span className={`ml-3`}>{error}</span>
                     </div>
-                ): false}
+                ) : false}
 
                 <AuthInput
                     label="Email"
