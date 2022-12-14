@@ -11,7 +11,7 @@ interface LayoutProps {
 }
 
 export default function Layout(props: LayoutProps) {
-    const { theme, switchTheme } = useData()
+    const { theme } = useData()
     return (
         <ForceAuth>
             <div className={`${theme} flex h-screen w-screen`}>
