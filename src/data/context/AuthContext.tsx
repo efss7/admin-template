@@ -7,6 +7,7 @@ import User from "../../model/User";
 interface AuthContextProps {
     user?: User
     loginGoogle?: () => Promise<void>
+    logout?: () => Promise<void>
 }
 
 
@@ -54,22 +55,41 @@ export function AuthProvider(props) {
     }
 
     async function loginGoogle() {
-        const res = await firebase.auth().signInWithPopup(
-            new firebase.auth.GoogleAuthProvider()
-        )
-        configureSection(res.user)
-        route.push('/')
+        try {
+            setLoading(true)
+            const res = await firebase.auth().signInWithPopup(
+                new firebase.auth.GoogleAuthProvider()
+            )
+            configureSection(res.user)
+            route.push('/')
+        } finally {
+            setLoading(false)
+        }
+
+    }
+
+    async function logout() {
+        try {
+            setLoading(true)
+            await firebase.auth().signOut()
+            await configureSection(null)
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
-        const cancel = firebase.auth().onIdTokenChanged(configureSection)
-        return () => cancel()
+        if (Cookies.get('admin-template-efss7-auth')) {
+            const cancel = firebase.auth().onIdTokenChanged(configureSection)
+            return () => cancel()
+        }
     }, [])
 
     return (
         <AuthContext.Provider value={{
             user,
-            loginGoogle
+            loginGoogle,
+            logout
         }}>
             {props.children}
         </AuthContext.Provider>

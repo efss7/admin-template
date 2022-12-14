@@ -1,3 +1,4 @@
+import useAuth from "../../data/hook/useAuth";
 import { IconBell, IconHome, IconLogout, IconSettings } from "../icons";
 import Logo from "./Logo";
 import MenuItems from "./MenuItems";
@@ -7,6 +8,7 @@ interface SideMenuProps {
 }
 
 export default function SideMenu(props: SideMenuProps) {
+    const {logout} = useAuth()
     return (
         <aside className="flex flex-col
         bg-gray-200 text-gray-700
@@ -24,8 +26,10 @@ export default function SideMenu(props: SideMenuProps) {
                 <MenuItems url='/notifications' text='Notificações' icon={IconBell} />
             </ul>
             <ul>
-                <MenuItems text='Sair' icon={IconLogout}
-                onClick={()=> console.log("logout")}
+                <MenuItems
+                text='Sair'
+                onClick={logout}
+                icon={IconLogout}
                 className={`
                 text-red-600 dark:text-red-400
                 hover:bg-red-400 hover:text-white dark:hover:text-white
