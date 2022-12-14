@@ -1,5 +1,6 @@
+import Cookies from 'js-cookie';
 import route from 'next/router';
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import firebase from "../../firebase/config";
 import User from "../../model/User";
 
@@ -23,20 +24,48 @@ async function userNormalized(userFirebase: firebase.User): Promise<User> {
     }
 }
 
+function managementCookie(logged: boolean) {
+    if (logged) {
+        Cookies.set('admin-template-efss7-auth', logged, {
+            expires: 7
+        })
+    } else {
+        Cookies.remove('admin-template-efss7-auth')
+    }
+}
+
 export function AuthProvider(props) {
+    const [loading, setLoading] = useState(true)
     const [user, setUser] = useState<User>(null)
+
+    async function configureSection(userFirebase) {
+        if (userFirebase?.email) {
+            const user = await userNormalized(userFirebase)
+            setUser(user)
+            managementCookie(true)
+            setLoading(false)
+            return user.email
+        } else {
+            setUser(null)
+            managementCookie(false)
+            setLoading(false)
+            return false
+        }
+    }
 
     async function loginGoogle() {
         const res = await firebase.auth().signInWithPopup(
             new firebase.auth.GoogleAuthProvider()
         )
-        if (res.user?.email) {
-            const user = await userNormalized(res.user)
-            setUser(user)
-            route.push('/')
-        }
-
+        configureSection(res.user)
+        route.push('/')
     }
+
+    useEffect(() => {
+        const cancel = firebase.auth().onIdTokenChanged(configureSection)
+        return () => cancel()
+    }, [])
+
     return (
         <AuthContext.Provider value={{
             user,
