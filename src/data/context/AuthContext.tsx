@@ -6,6 +6,7 @@ import User from "../../model/User";
 
 interface AuthContextProps {
     user?: User
+    loading?: boolean
     loginGoogle?: () => Promise<void>
     logout?: () => Promise<void>
 }
@@ -82,12 +83,15 @@ export function AuthProvider(props) {
         if (Cookies.get('admin-template-efss7-auth')) {
             const cancel = firebase.auth().onIdTokenChanged(configureSection)
             return () => cancel()
+        } else{
+            setLoading(false)
         }
     }, [])
 
     return (
         <AuthContext.Provider value={{
             user,
+            loading,
             loginGoogle,
             logout
         }}>
